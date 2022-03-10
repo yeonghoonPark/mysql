@@ -1,0 +1,36 @@
+/* DROP DATABASE IF EXISTS tmp;
+CREATE DATABASE tmp;
+USE tmp;
+CREATE TABLE table1(
+	attr1 INTEGER,
+    attr2 INTEGER,
+    attr3 INTEGER
+); 
+
+INSERT INTO table1(attr1,attr2,attr3) VALUES (10,10,10);
+INSERT INTO table1(attr1,attr2,attr3) VALUES (20,20,20);
+INSERT INTO table1(attr1,attr2,attr3) VALUES (30,30,30);
+INSERT INTO table1(attr1,attr2,attr3) VALUES (40,40,40);
+INSERT INTO table1(attr1,attr2,attr3) VALUES (50,50,50);
+*/
+
+SELECT * FROM table1;
+
+/* ALTER TABLE table1 CHANGE attr1 속성1 INTEGER; 
+ALTER TABLE table1 CHANGE attr2 속성2 VARCHAR(10);
+ALTER TABLE table1 CHANGE attr3 속성3 VARCHAR(20);*/ 
+
+/* ALTER TABLE table1 ADD 속성4 INT; */
+
+UPDATE table1 SET 속성4=10 WHERE 속성1=10;
+
+ALTER TABLE table1 DROP COLUMN 속성4;
+
+SELECT * FROM table1;
+
+ALTER TABLE table1 MODIFY 속성3 INT;
+ALTER TABLE table1 MODIFY 속성1 INT PRIMARY KEY NOT NULL;
+
+
+
+
