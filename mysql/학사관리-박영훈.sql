@@ -171,9 +171,11 @@ FROM 학과;
 
 UPDATE 학과 SET 학과.학과명='컴퓨터공학과' WHERE 학과.학과명='컴퓨터학과';
 
-SET foreign_key_checks = 0;
+/* 외래키 참조무결성 해제 */
+SET foreign_key_checks=0;
 UPDATE 학과 SET 학과.학과번호='0111' WHERE 학과.학과번호='10020';
-SET foreign_key_checks = 0;
+/* 외래키 참조무결정 설정 */
+SET foreign_key_checks=1;
 
 SELECT *
 FROM 학과;
@@ -182,7 +184,11 @@ FROM 학과;
 SELECT *
 FROM 교수;
 
+/* 외래키 참조무결성 해제 */
+SET foreign_key_checks=0;
 DELETE 교수.* FROM 교수 LEFT OUTER JOIN 강좌 ON 교수.교수번호=강좌.교수번호 WHERE 강좌.교수번호 IS NULL;
+/* 외래키 참조무결성 설정 */
+SET foreign_key_checks=1;
 
 SELECT *
 FROM 교수;

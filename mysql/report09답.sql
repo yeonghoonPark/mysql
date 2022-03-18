@@ -1,4 +1,3 @@
-
 -- -------------------------------------------------------------------------------
 -- ------------------------      학사관리 DB 정의      ------------------------------
 -- -------------------------------------------------------------------------------
@@ -17,6 +16,14 @@ USE 학사관리_db;
 -- -------------------------------------------------------------------------------
 -- ------------------------      CREATE TABLE      -------------------------------
 -- -------------------------------------------------------------------------------
+CREATE TABLE 학과(
+	번호 VARCHAR(10),
+    학과명 VARCHAR(45) NOT NULL UNIQUE,
+    전화번호 VARCHAR(14) NOT NULL UNIQUE,
+    PRIMARY KEY (번호)
+ );
+ DESC 학과;
+
  CREATE TABLE 학생(
 	번호 VARCHAR(10) NOT NULL,
     이름 VARCHAR(20) NOT NULL,
@@ -42,14 +49,16 @@ DESC 학생;
     FOREIGN KEY (소속학과번호) REFERENCES 학과(번호)
  );
 DESC 교수;
- 
- CREATE TABLE 학과(
-	번호 VARCHAR(10),
-    학과명 VARCHAR(45) NOT NULL UNIQUE,
-    전화번호 VARCHAR(14) NOT NULL UNIQUE,
-    PRIMARY KEY (번호)
+
+ CREATE TABLE 학생_has_교수(
+	학생번호 VARCHAR(10),
+    교수번호 VARCHAR(10),
+    학년_학기 VARCHAR(3),
+    PRIMARY KEY (학생번호, 교수번호),
+    FOREIGN KEY (학생번호) REFERENCES 학생(번호),
+    FOREIGN KEY (교수번호) REFERENCES 교수(번호)
  );
- DESC 학과;
+ DESC 학생_has_교수;
  
  CREATE TABLE 강좌(
 	번호 VARCHAR(10),
@@ -73,22 +82,11 @@ DESC 강좌;
     기타점수 INTEGER NOT NULL,
     총점 INTEGER NOT NULL,
     평점 VARCHAR(2) NOT NULL,
-    PRIMARY KEY (학생번호, 강좌번호, 교수번호),
-    FOREIGN KEY (학생번호) REFERENCES 학생(번호),
-    FOREIGN KEY (강좌번호) REFERENCES 강좌(번호),
-    FOREIGN KEY (교수번호) REFERENCES 강좌(교수번호)
+	PRIMARY KEY (학생번호, 강좌번호, 교수번호),
+    FOREIGN KEY (학생번호) REFERENCES 학생(번호) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (강좌번호, 교수번호) REFERENCES 강좌(번호, 교수번호) ON UPDATE CASCADE ON DELETE CASCADE
  );
 DESC 수강내역;
- 
- CREATE TABLE 학생_has_교수(
-	학생번호 VARCHAR(10),
-    교수번호 VARCHAR(10),
-    학년_학기 VARCHAR(3),
-    PRIMARY KEY (학생번호, 교수번호),
-    FOREIGN KEY (학생번호) REFERENCES 학생(번호),
-    FOREIGN KEY (교수번호) REFERENCES 교수(번호)
- );
- DESC 학생_has_교수;
  
 -- -------------------------------------------------------------------------------
 -- -----------------------    INSERT INTO VALUES    ------------------------------
@@ -105,7 +103,6 @@ INSERT INTO 학과 VALUES('0008', '국어과', '032-0008-0008');
 INSERT INTO 학과 VALUES('0009', '사학과', '032-0009-0009');
 INSERT INTO 학과 VALUES('0010', '철학과', '032-0010-0010');
 SELECT * FROM 학과;
-
 
 DESC 학생;
 INSERT INTO 학생 VALUES('0001', '홍길동', '000000-0000001', '인천광역시 서구', 010-0001-0001, '01@gmail.com', '0001');
@@ -149,6 +146,7 @@ INSERT INTO 강좌 VALUES('0001', '0005', '정보화사회', 4, 32, '철학관 3
 INSERT INTO 강좌 VALUES('0005', '0003', '포스트코로나', 3, 28, '인문관 203호' );
 SELECT * FROM 강좌;
 
+SET foreign_key_checks=0;
 DESC 수강내역;
 INSERT INTO 수강내역 VALUES('0001', '0001', '0005', 10, 30, 30, 30, 0, 'F');
 INSERT INTO 수강내역 VALUES('0003', '0003', '0005', 10, 30, 30, 30, 100, 'A');
@@ -161,6 +159,7 @@ INSERT INTO 수강내역 VALUES('0002', '0001', '0002', 10, 30, 30, 30, 30, 'D')
 INSERT INTO 수강내역 VALUES('0010', '0003', '0003', 10, 30, 30, 30, 10, 'D');
 INSERT INTO 수강내역 VALUES('0010', '0005', '0003', 10, 30, 30, 30, 0, 'F');
 SELECT * FROM 수강내역;
+SET foreign_key_checks=1;
 
 -- -------------------------------------------------------------------------------
 -- -----------------------          SELECT          ------------------------------
@@ -186,9 +185,11 @@ SELECT 학생.번호 AS 학번, 교수.소속학과번호 AS 교수명, 학과.�
 FROM 학생 INNER JOIN 학과 ON 학생.학과번호=학과.번호 INNER JOIN 교수 ON 교수.소속학과번호=학과.번호
 WHERE 학과.학과명='컴퓨터학과';
 
+SET foreign_key_checks=0;
 UPDATE 교수 SET 소속학과번호='0111' WHERE 소속학과번호 IN(SELECT 번호 FROM 학과 WHERE 학과명='컴퓨터학과');
 UPDATE 학생 SET 학과번호='0111' WHERE 학과번호 IN(SELECT 번호 FROM 학과 WHERE 학과명='컴퓨터학과');
 UPDATE 학과 SET 학과명='컴퓨터공학과',번호='0111' WHERE 학과명='컴퓨터학과';
+SET foreign_key_checks=1;
 
 SELECT 학생.번호 AS 학번, 교수.소속학과번호 AS 교수명, 학과.번호 AS 학과번호, 학과.학과명 AS 학과명 
 FROM 학생 INNER JOIN 학과 ON 학생.학과번호=학과.번호 INNER JOIN 교수 ON 교수.소속학과번호=학과.번호
